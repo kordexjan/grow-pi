@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+adafruit-circuitpython-ahtx0
+picamera2
+pillow

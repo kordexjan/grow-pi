@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Raspberry Pi Monitor</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #eef2f7;
+        color: #333;
+        text-align: center;
+        padding: 40px;
+      }
+      h1 {
+        color: #007acc;
+        font-size: 36px;
+      }
+      .card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: inline-block;
+        padding: 25px;
+        margin: 20px;
+      }
+      img {
+        width: 480px;
+        height: auto;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+      p {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Raspberry Pi Live Monitor</h1>
+
+    <div class="card">
+      <h2>Sensor Daten</h2>
+      <p>Temperatur: <span id="temperature">Lade...</span> °C</p>
+      <p>Luftfeuchtigkeit: <span id="humidity">Lade...</span> %</p>
+    </div>
+
+    <div class="card">
+      <h2>Live Kamera</h2>
+      <img id="camera" src="/api/camera" alt="Kamerabild" />
+    </div>
+
+    <script>
+      async function fetchSensorData() {
+        const response = await fetch("/api/sensor");
+        const data = await response.json();
+        document.getElementById("temperature").innerText =
+          data.temperature?.toFixed(1) || "Fehler";
+        document.getElementById("humidity").innerText =
+          data.humidity?.toFixed(1) || "Fehler";
+      }
+
+      function refreshCameraImage() {
+        const img = document.getElementById("camera");
+        img.src = `/api/camera?${new Date().getTime()}`; // No cache
+      }
+
+      setInterval(fetchSensorData, 5000); // Update sensor data alle 5s
+      setInterval(refreshCameraImage, 3000); // Update Kamera alle 3s
+
+      fetchSensorData();
+      refreshCameraImage();
+    </script>
+  </body>
+</html>
